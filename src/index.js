@@ -25,4 +25,13 @@ dotenv.config();
 //     }
 // })
 
-connectDB()
+connectDB().then(()=>
+     app.listen(process.env.PORT || 5000, ()=>{
+    console.log(`process is running at {process.env.PORT}`)
+}))
+.catch(
+    (err)=>
+    {
+    console.log("Error connecting monogodb")
+}
+)
