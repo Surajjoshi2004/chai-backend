@@ -1,10 +1,13 @@
-// class ApiError extends Error{
+//prebuild hai Error class phele se usi ko extend kar rhe h
 
+// class ApiError extends Error{
+    
+        //constructor overriding
 //     constructor(
 //         statusCode,
-//         message = "Something went wrong",
-//         errors = [],
-//         stack =""
+//          message = "something went wrong",
+//          error = [], 
+//          stack = ""
 //     ){
 //         super(message)
 //         this.statusCode = statusCode
@@ -26,7 +29,9 @@
 //     }
 // }
 
-export {ApiError}
+export {ApiError}   //class export kardi
+
+//agar api error  kabhi aaye to ese aayenge
 
 class ApiError extends Error {
     constructor(

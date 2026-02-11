@@ -1,4 +1,4 @@
-// 
+
 import dotenv from "dotenv"
 import connectDB from "./db/index.js"
 import {app} from "./app.js"
@@ -6,6 +6,8 @@ dotenv.config({
     path:"./.env"
 });
 
+
+//this is when we do connection in the same file as index.js not on the another file
 // import express, { application } from "express"
 
 // const app = express()
@@ -28,8 +30,9 @@ dotenv.config({
 //     }
 // })
 
-connectDB().then(()=>
-     app.listen(process.env.PORT || 5000, ()=>{
+connectDB().then(()=>                   // calling method from that index.js
+     app.listen(process.env.PORT || 8000, 
+        ()=>{
     console.log(`process is running at {process.env.PORT}`)
 }))
 .catch(
