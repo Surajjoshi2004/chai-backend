@@ -1,5 +1,5 @@
 import mongoose, {Schema} from "mongoose";
-import { JsonWebTokenError } from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
 const userSchema = new Schema(
@@ -52,7 +52,7 @@ const userSchema = new Schema(
                 required: [true, "Password is required"]
             },
 
-            reshToken:{
+            RefreshToken:{
                 type: String,
 
             }
@@ -62,18 +62,23 @@ const userSchema = new Schema(
         timestamps: true
     }
 )
+//jab deta save ho to usse phele dekh lo
+userSchema.pre("save", async function (next) {
+    if(!this.isModified("password")) return;
 
-userSchema.pre("save", async function (next){
-    if(!this.isModified("password")) return next();
-    
-    this.password = bcrypt.hash(this.password,10)
+          //check karo modified hai ki nhi warn nhi chedna
+    this.password = await  bcrypt.hash(this.password,10)   //hash rounds
     next()
-})
+}
+)
 
 userSchema.methods.isPasswordCorrect = async function(password)
 {
-   return await bcrypt.compare(password, this.password)
+    //bycrypt password check kar rha 
+   return await bcrypt.compare(password, this.password)   //encrypted , wala aur ye wala  true or false aata value
 }
+
+//prorperyt change kar rhe h
 
 userSchema.methods.generateAccessToken = function(){
     return jwt.sign({
@@ -89,8 +94,8 @@ userSchema.methods.generateAccessToken = function(){
 )
 }
 userSchema.methods.generateRefreshToken = function(){
-    return jwt.sign({
-        _id: this._id,
+    return jwt.sign({                           //generate kar deta h 
+        _id: this._id,  
         
     },
     process.env.REFRESH_TOKEN_SECRET,

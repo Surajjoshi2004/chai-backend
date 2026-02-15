@@ -29,7 +29,7 @@
 //     }
 // }
 
-export {ApiError}   //class export kardi
+   //class export kardi
 
 //agar api error  kabhi aaye to ese aayenge
 

@@ -1,8 +1,7 @@
-import mongoose, {Schema, SchemaType} from "mongoose"
-import jwt 
+import mongoose, {Schema} from "mongoose"
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"
 
-const VideoSchema = new Schema({
+const videoSchema = new Schema({
     
         videoFile: {
             type: String,       //cloudinary
@@ -34,7 +33,7 @@ const VideoSchema = new Schema({
             default: 0
         },
 
-        isPublishede: {
+        isPublished: {
             type: Boolean,
             default: true
         },
@@ -47,5 +46,7 @@ const VideoSchema = new Schema({
     {timestamps: true}
 
 )
+
+videoSchema.plugin(mongooseAggregatePaginate)
 
 export const Video = mongoose.model("video",videoSchema)

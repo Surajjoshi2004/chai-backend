@@ -1,24 +1,89 @@
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
+import {User} from "../models/user.model.js"
+import {uploadOnCloudinary} from "..utils/
+import { upload } from "../middlewares/multer.middleware.js";
+import {ApiResponse} from "../utils/ApiResponse.js"
+
 
 const registerUser = asyncHandler(async(req, res) => {
     // get user details from frontend
     // validation the user details
-    // chec if user already exists usernam,email
+    // chec if user already exists usernam,email  // .includes can check @ is there or not
     // check for images, check for avatar
-    // upload them to cloudinary, avatar
+    // upload them to cloudinary, avat ar
     // create user object - create entry in db
     // remove password and refresh token field from response
     // check for user creation 
-    // return response to frontend
+    // return res
 
     const {fullName, email,username, password} = req.body
     console.log("email: ", email);
 
-    if([fullName,email,username,password].some((field) => field))
+    if([fullName,email,username,password].some((field) => field?.trim() === "")) //check at least one element in an arry passes a test
     {
         throw new ApiError(400, "Fullname is required")
     }
+
+    //user call karlega mongodb   //findOne batata hai pehla user jiske pass ye h
+    const existedUser = User.findOne({
+        $or : [{username}, {email}]
+    })
+
+    if(existedUser)
+    {
+        throw new ApiError(409, "User with email or username already exists")
+    }
+
+    //middleware req ke baad aur parameter add kr deta h 
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+
+    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+
+    //condition to check is avatarimage is there or not 
+
+    if(!avatarLocalPath)
+    {
+        throw new ApiError(400, "Avatar file is required")
+    }
+
+    //cover image hai nhi chalega
+
+    //cloudinary pe check kar liya h
+    const avatar = await uploadOnCloudinary(avatarLocalPath) 
+    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+
+    if(!avatar)
+    {
+        throw new ApiError(400, "Avatar is required")
+    }
+
+
+    const user = await User.create({
+        fullName,
+        avatar: avatar.url,
+        coverImage: coverImage?.url || "",      //check kar rha ki hai ki nhi warna emtpy
+        email, 
+        password, 
+        username: username.toLowerCase()
+    })
+
+    //mongodb apne aaap ek id deta h use use karke ham chekc
+    //kr sakte hai ki user hai ki nhi 
+    const createdUser = await User.findById(user._id).select("-password - refreshToken")    //kya kya nhi chaiye ye likha hua hai parameter mein 
+    
+
+    if(!createdUser)
+    {
+        throw new ApiError(500, "Something went wrong while registering the user ")
+    }
+
+    return res.status(201).json(
+
+        new ApiResponse(200,createdUser,"User registered successfully" )
+
+    )
+
 
     
  
