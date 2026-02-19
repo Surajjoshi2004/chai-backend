@@ -32,7 +32,8 @@ const userSchema = new Schema(
             },
 
             avatar: {
-                type: String  //link from antoehr place cloudinary url
+                type: String , //link from antoehr place cloudinary url
+                required: true
             },
 
             coverImage:{
@@ -52,7 +53,7 @@ const userSchema = new Schema(
                 required: [true, "Password is required"]
             },
 
-            RefreshToken:{
+            refreshToken:{
                 type: String,
 
             }
@@ -63,14 +64,12 @@ const userSchema = new Schema(
     }
 )
 //jab deta save ho to usse phele dekh lo
-userSchema.pre("save", async function (next) {
+userSchema.pre("save", async function () {
     if(!this.isModified("password")) return;
 
           //check karo modified hai ki nhi warn nhi chedna
     this.password = await  bcrypt.hash(this.password,10)   //hash rounds
-    next()
-}
-)
+})
 
 userSchema.methods.isPasswordCorrect = async function(password)
 {

@@ -1,10 +1,7 @@
 
-import dotenv from "dotenv"
+import "./config/env.js";
 import connectDB from "./db/index.js"
 import {app} from "./app.js"
-dotenv.config({
-    path:"./.env"
-});
 
 
 //this is when we do connection in the same file as index.js not on the another file
@@ -30,14 +27,17 @@ dotenv.config({
 //     }
 // })
 
+app.get("/", (req, res) => {
+  res.send("Server is running 🚀");
+});
 connectDB().then(()=>                   // calling method from that index.js
-     app.listen(process.env.PORT || 8000, 
+     app.listen(process.env.PORT || 5000, 
         ()=>{
-    console.log(`process is running at {process.env.PORT}`)
+    console.log(`process is running at ${process.env.PORT}`)
 }))
 .catch(
     (err)=>
     {
-    console.log("Error connecting monogodb")
+    console.log("Error connecting monogodb", err);
 }
 )
