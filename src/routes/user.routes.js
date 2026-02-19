@@ -4,6 +4,7 @@ import {upload} from "../middlewares/multer.middleware.js";
 
 const router = Router();
 
+
 router.route("/register").post(
     upload.fields([                     // use edhar middlewarre use how rhi h //array accept krta h
         {

@@ -15,12 +15,12 @@ const videoSchema = new Schema({
 
         title:{
             type: String,   
-            requried: true, 
+            required: true, 
         },
 
         description:{
             type: String, 
-            requied: true,
+            required: true,
         },
 
         duration:{
@@ -49,4 +49,4 @@ const videoSchema = new Schema({
 
 videoSchema.plugin(mongooseAggregatePaginate)
 
-export const Video = mongoose.model("video",videoSchema)
+export const Video = mongoose.model("Video",videoSchema)

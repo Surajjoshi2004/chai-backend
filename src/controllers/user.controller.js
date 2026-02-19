@@ -1,8 +1,7 @@
 import {asyncHandler} from "../utils/asyncHandler.js";
 import {ApiError} from "../utils/ApiError.js";
 import {User} from "../models/user.model.js"
-import {uploadOnCloudinary} from "..utils/
-import { upload } from "../middlewares/multer.middleware.js";
+import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 
 
@@ -20,13 +19,13 @@ const registerUser = asyncHandler(async(req, res) => {
     const {fullName, email,username, password} = req.body
     console.log("email: ", email);
 
-    if([fullName,email,username,password].some((field) => field?.trim() === "")) //check at least one element in an arry passes a test
-    {
-        throw new ApiError(400, "Fullname is required")
-    }
+    if([fullName, email, username, password].some(field => field?.trim()  === "")) {
+    throw new ApiError(400, "All fields are required");
+}
+
 
     //user call karlega mongodb   //findOne batata hai pehla user jiske pass ye h
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or : [{username}, {email}]
     })
 
@@ -36,9 +35,9 @@ const registerUser = asyncHandler(async(req, res) => {
     }
 
     //middleware req ke baad aur parameter add kr deta h 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
 
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
     //condition to check is avatarimage is there or not 
 
@@ -51,7 +50,13 @@ const registerUser = asyncHandler(async(req, res) => {
 
     //cloudinary pe check kar liya h
     const avatar = await uploadOnCloudinary(avatarLocalPath) 
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+
+    let coverImage = null
+
+    if(coverImageLocalPath)
+    {
+     coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    }
 
     if(!avatar)
     {
@@ -70,7 +75,7 @@ const registerUser = asyncHandler(async(req, res) => {
 
     //mongodb apne aaap ek id deta h use use karke ham chekc
     //kr sakte hai ki user hai ki nhi 
-    const createdUser = await User.findById(user._id).select("-password - refreshToken")    //kya kya nhi chaiye ye likha hua hai parameter mein 
+    const createdUser = await User.findById(user._id).select("-password -refreshToken")    //kya kya nhi chaiye ye likha hua hai parameter mein 
     
 
     if(!createdUser)
@@ -80,7 +85,7 @@ const registerUser = asyncHandler(async(req, res) => {
 
     return res.status(201).json(
 
-        new ApiResponse(200,createdUser,"User registered successfully" )
+        new ApiResponse(201,createdUser,"User registered successfully" )
 
     )
 
