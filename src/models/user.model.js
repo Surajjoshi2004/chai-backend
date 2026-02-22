@@ -66,9 +66,7 @@ const userSchema = new Schema(
 //jab deta save ho to usse phele dekh lo
 userSchema.pre("save", async function () {
     if(!this.isModified("password")) return;
-
-          //check karo modified hai ki nhi warn nhi chedna
-    this.password = await  bcrypt.hash(this.password,10)   //hash rounds
+    this.password = await bcrypt.hash(this.password, 10)
 })
 
 userSchema.methods.isPasswordCorrect = async function(password)

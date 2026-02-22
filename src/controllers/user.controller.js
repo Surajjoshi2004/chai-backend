@@ -16,6 +16,11 @@ const registerUser = asyncHandler(async(req, res) => {
     // check for user creation 
     // return res
 
+    console.log("🔴 REQ.FILES →", req.files)
+    console.log("🔴 REQ.FILE →", req.file)
+    console.log("🔴 CONTENT TYPE →", req.headers['content-type'])
+    
+
     const {fullName, email,username, password} = req.body
     console.log("email: ", email);
 
@@ -37,7 +42,14 @@ const registerUser = asyncHandler(async(req, res) => {
     //middleware req ke baad aur parameter add kr deta h 
     const avatarLocalPath = req.files?.avatar?.[0]?.path;
 
-    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
+    let coverImageLocalPath;
+
+    if(req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0)
+    {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
+
+
 
     //condition to check is avatarimage is there or not 
 
@@ -94,4 +106,11 @@ const registerUser = asyncHandler(async(req, res) => {
  
 })
 
-export {registerUser}
+const loginUser = asyncHandler(async(req,res)=> {
+    // req body ->data
+    //username email hai ki nhi h
+    //
+})
+export {registerUser, 
+    loginUser
+}
