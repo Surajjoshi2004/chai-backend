@@ -63,7 +63,9 @@ const userSchema = new Schema(
         timestamps: true
     }
 )
-//jab deta save ho to usse phele dekh lo
+//jab deta save ho to usse phele dekh lo 
+
+//we used here function name because
 userSchema.pre("save", async function () {
     if(!this.isModified("password")) return;
     this.password = await bcrypt.hash(this.password, 10)
@@ -71,7 +73,7 @@ userSchema.pre("save", async function () {
 
 userSchema.methods.isPasswordCorrect = async function(password)
 {
-    //bycrypt password check kar rha 
+    //bcrypt password check kar rha 
    return await bcrypt.compare(password, this.password)   //encrypted , wala aur ye wala  true or false aata value
 }
 
